@@ -1,0 +1,24 @@
+<template name="chat">
+  {{#if currentUser}} {{#if isLoading}}
+  <div class="loading">loading...</div>
+  {{/if}}
+  <ul class="messages-list">
+    {{#each messages}} {{> message}} {{/each}}
+  </ul>
+  {{else}}
+  <div class="not-login">Please log in to start messaging</div>
+  {{/if}}
+</template>
+
+<template name="message">
+  <li class="messages-container">
+    <div class="messages">
+      {{#if senderTagNeeded}}
+      <header class="sender-tag">{{authorUsername}} :</header>
+      {{/if}}
+      <ul class="message-list">
+        <li><span>{{text}}</span></li>
+      </ul>
+    </div>
+  </li>
+</template>
