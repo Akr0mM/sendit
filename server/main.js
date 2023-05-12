@@ -4,4 +4,6 @@ import '../imports/api/messages/methods';
 import '/imports/api/messages/publish';
 import '/imports/api/users/publish';
 
-Meteor.startup(() => { });
+Meteor.startup(() => {
+    //
+ });

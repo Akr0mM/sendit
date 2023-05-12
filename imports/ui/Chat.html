@@ -1,6 +1,6 @@
 <template name="chat">
   {{#if currentUser}} {{#if isLoading}}
-  <div class="loading">loading...</div>
+  <div class="loading">Loading...</div>
   {{/if}}
   <ul class="messages-list">
     {{#each messages}} {{> message}} {{/each}}
@@ -14,7 +14,7 @@
   <li class="messages-container">
     <div class="messages">
       {{#if senderTagNeeded}}
-      <header class="sender-tag">{{authorUsername}} :</header>
+      <header class="sender-tag">{{getAuthorUsername}} :</header>
       {{/if}}
       <ul class="message-list">
         <li><span>{{text}}</span></li>

@@ -1,11 +1,11 @@
-import { Template } from 'meteor/templating';
-import { Accounts } from 'meteor/accounts-base';
-import { Meteor } from 'meteor/meteor'
+import { Template } from "meteor/templating";
+import { Accounts } from "meteor/accounts-base";
+import { Meteor } from "meteor/meteor";
 
-import './main.html';
-import '../imports/ui/App.js';
+import "./main.html";
+import "../imports/ui/App.js";
 
-// Accounts config 
+// Accounts config
 Accounts.ui.config({
-    passwordSignupFields:'USERNAME_ONLY'
-})
+  passwordSignupFields: "USERNAME_ONLY",
+});

@@ -16,5 +16,9 @@ Template.message.helpers({
         const currentThreadId = Meteor.user()?.profile?.currentThreadId;
         const messagesInThread = Messages.find({ threadId: currentThreadId }, { sort: { createdAt: 1 } }).fetch();
         return true;
+    },
+
+    getAuthorUsername() {
+        console.log();
     }
 });

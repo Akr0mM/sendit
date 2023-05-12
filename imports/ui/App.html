@@ -3,26 +3,21 @@
 </body>
 
 <template name="show">
-  <div class="main-container">
-    {{> navbar}} {{#if openChat}} {{> chatContainerOpen}} {{else}} {{>
-    chatContainer}} {{/if}}
+  <div class="app">
+    {{> navbar}} {{#if openChat}} {{> chatOpen}} {{else}} {{> chatClose}}
+    {{/if}}
   </div>
 </template>
 
-<template name="chatContainerOpen">
-  <div class="main-chat-container-open">
-    <div class="talking-to">
-      {{!-- doit faire des changement pour afficher tout le monde --}}
-      <div id="talking-to">{{currentChatUsers}}</div>
-    </div>
-    <div class="chat-container">{{> chat}} {{> form}}</div>
+<template name="chatOpen">
+  <div class="chat-container">
+    <div class="group-name">Talking to : {{currentGroupName}}</div>
+    <div class="chat">{{> chat}} {{> form}}</div>
   </div>
 </template>
 
-<template name="chatContainer">
-  <div class="main-chat-container">
-    <div class="chat-container-close">
-      ⇐ Ouvrez un chat pour commencer à envoyer des messages ⇐
-    </div>
+<template name="chatClose">
+  <div class="chat-close">
+    ⇐ Ouvrez un chat pour commencer à envoyer des messages ⇐
   </div>
 </template>
