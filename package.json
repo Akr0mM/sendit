@@ -11,7 +11,8 @@
     "@babel/runtime": "^7.17.9",
     "insecure": "0.0.4",
     "jquery": "^3.6.0",
-    "meteor-node-stubs": "^1.2.1"
+    "meteor-node-stubs": "^1.2.1",
+    "moment": "^2.29.4"
   },
   "meteor": {
     "mainModule": {

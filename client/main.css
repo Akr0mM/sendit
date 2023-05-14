@@ -14,6 +14,7 @@
   height: 100vh;
   padding-left: 8px;
   padding-right: 8px;
+  padding-top: 8px;
   background-color: #000000;
 }
 
@@ -34,7 +35,7 @@
 
 .last-chats-container {
   width: 100%;
-  height: calc(100vh - 123px);
+  height: calc(100vh - 131px);
   background-color: #121212;
   border-radius: 10px;
   position: relative;
@@ -159,6 +160,41 @@
   font-size: 0.77rem;
 }
 
+.input-container {
+  position: absolute;
+  bottom: 20px;
+  padding-left: 12px;
+  height: 40px;
+  width: 100%;
+}
+
+#send-input {
+  background-color: #242424;
+  width: calc(100% - 2*12px - 40px - 11px);
+  height: 100%;
+  border-radius: 20px;
+  border: none;
+  padding-left: 17px;
+}
+
+#send-input:focus {
+  outline: none;
+}
+
+.input-import {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #242424;
+  border: none;
+  margin-left: 11px;
+}
+
+.input-import-img {
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+}
+
 .chat-close {
   background-color: #121212;
   height: 100%;
@@ -172,7 +208,6 @@
 }
 
 .chat-container {
-  background-color: red;
   height: 100%;
   width: calc(100vw - 2*8px - 380px - 8px);
   position: relative;
@@ -182,9 +217,9 @@
 .chat {
   background-color: #121212;
   width: 100%;
-  height: calc(100vh - 115px - 8px);
+  height: calc(100vh - 57px - 3*8px);
   position: relative;
-  bottom: -123px;
+  bottom: -65px;
   border-radius: 10px;
   /* border: 1px solid #393939; */
 }
@@ -202,4 +237,9 @@ input[type="search"]::-webkit-search-results-decoration {
 
 ul {
   list-style-type: none;
+}
+
+.loginButton{
+  width: 100px;
+  background-color: cyan;
 }

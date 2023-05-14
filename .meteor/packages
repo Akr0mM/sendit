@@ -24,6 +24,11 @@ shell-server@0.5.0            # Server-side component of the `meteor shell` comm
 hot-module-replacement@0.5.3  # Update code in development without reloading the page
 blaze-hot               # Update files using Blaze's API with HMR
 accounts-password
-accounts-ui
 reactive-dict
 session
+accounts-base
+accounts-ui
+accounts-google
+accounts-facebook
+google-config-ui
+facebook-config-ui

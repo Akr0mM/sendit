@@ -13,12 +13,19 @@ Template.chat.helpers({
 
 Template.message.helpers({
     senderTagNeeded() {
-        const currentThreadId = Meteor.user()?.profile?.currentThreadId;
+        const currentThreadId = this.threadId;
         const messagesInThread = Messages.find({ threadId: currentThreadId }, { sort: { createdAt: 1 } }).fetch();
-        return true;
+        let messages = [];
+        messagesInThread.forEach(message => { messages.push(message.text); });
+        const index = messages.indexOf(this.text);
+
+        if (index === 0) return true;
+        if (messagesInThread[index - 1].authorUsername === messagesInThread[index].authorUsername) return false;
+        else return true;
     },
 
     getAuthorUsername() {
-        console.log();
+        if (this.authorUsername === Meteor.user().username) return 'Moi';
+        else return this.authorUsername;
     }
 });

@@ -65,6 +65,21 @@
       ],
       "meteor/session": [
         "C:\\Users\\faivr\\AppData\\Local/.meteor/packages/session/1.2.1/web.browser/session.js"
+      ],
+      "meteor/accounts-ui-unstyled": [
+        "C:\\Users\\faivr\\AppData\\Local/.meteor/packages/accounts-ui-unstyled/1.7.0/web.browser/accounts_ui.js",
+        "C:\\Users\\faivr\\AppData\\Local/.meteor/packages/accounts-ui-unstyled/1.7.0/web.browser/login_buttons_session.js",
+        "C:\\Users\\faivr\\AppData\\Local/.meteor/packages/accounts-ui-unstyled/1.7.0/web.browser/login_buttons.js",
+        "C:\\Users\\faivr\\AppData\\Local/.meteor/packages/accounts-ui-unstyled/1.7.0/web.browser/login_buttons_single.js",
+        "C:\\Users\\faivr\\AppData\\Local/.meteor/packages/accounts-ui-unstyled/1.7.0/web.browser/login_buttons_dropdown.js",
+        "C:\\Users\\faivr\\AppData\\Local/.meteor/packages/accounts-ui-unstyled/1.7.0/web.browser/login_buttons_dialogs.js"
+      ],
+      "meteor/accounts-base": [
+        "C:\\Users\\faivr\\AppData\\Local/.meteor/packages/accounts-base/2.2.8/web.browser/client_main.js",
+        "C:\\Users\\faivr\\AppData\\Local/.meteor/packages/accounts-base/2.2.8/web.browser/accounts_client.js",
+        "C:\\Users\\faivr\\AppData\\Local/.meteor/packages/accounts-base/2.2.8/web.browser/accounts_common.js",
+        "C:\\Users\\faivr\\AppData\\Local/.meteor/packages/accounts-base/2.2.8/web.browser/accounts_server.js",
+        "C:\\Users\\faivr\\AppData\\Local/.meteor/packages/accounts-base/2.2.8/web.browser/server_main.js"
       ]
     }
   },

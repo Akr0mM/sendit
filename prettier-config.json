@@ -1,0 +1,20 @@
+{
+    "editor.formatOnSave": true,
+    "html.format.enable": true,
+    "html.format.indentHandlebars": true,
+    "html.format.maxPreserveNewLines": 0,
+    "workbench.iconTheme": "vs-minimal",
+    "workbench.sideBar.location": "left",
+    "emmet.showSuggestionsAsSnippets": true,
+    "editor.snippetSuggestions": "top",
+    "search.excludeFolders": [
+        ".git",
+        "node_modules",
+        "bower_components",
+        ".meteor"
+    ],
+    "files.associations": {
+        "*.overrides": "less"
+    },
+    "window.zoomLevel": 1
+}

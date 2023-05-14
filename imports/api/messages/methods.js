@@ -39,30 +39,11 @@ Meteor.methods({
 
     if (!thread) {
       console.log('error: thread not found methods.js');
-      const targetUsername = Meteor.users.findOne({
-        _id: targetUserId,
-      })?.username;
-      const currentUserUsername = Meteor.user()?.username;
-      Threads.insert({
-        usersId: [currentUser, targetUserId],
-        usersUsernames: [currentUserUsername, targetUsername],
-        createdAt: new Date(),
-      });
-
-      const newThread = Threads.findOne({
-        $or: [
-          { usersId: { $all: [currentUser, targetUserId] } },
-          { usersId: { $all: [targetUserId, currentUser] } },
-        ],
-      });
-
+    } else {
       Meteor.users.update(currentUser, {
-        $set: { "profile.currentThreadId": newThread._id },
+        $set: { "profile.currentThreadId": thread._id },
       });
     }
-    Meteor.users.update(currentUser, {
-      $set: { "profile.currentThreadId": thread._id },
-    });
   },
 
   removeCurrentThreadId() {
@@ -82,4 +63,41 @@ Meteor.methods({
       $set: { "profile.isOnline": false },
     });
   },
+
+  initThreads() {
+    Meteor.users.find({ _id: { $ne: Meteor.userId() } }).forEach(user => {
+      const currentUser = Meteor.userId();
+      const targetUserId = user && user._id;
+
+      if ( // si le thread n'existe pas
+        !Threads.findOne({
+          $or: [
+            { usersId: { $all: [currentUser, targetUserId] } },
+            { usersId: { $all: [targetUserId, currentUser] } },
+          ],
+        })
+      ) { // en creer un
+        const targetUsername = Meteor.users.findOne({
+          _id: targetUserId,
+        })?.username;
+        const currentUserUsername = Meteor.user()?.username;
+        Threads.insert({
+          usersId: [currentUser, targetUserId],
+          usersUsernames: [currentUserUsername, targetUsername],
+          lastChatText: "Envoyer votre premier message !",
+          lastChatAt: new Date(0),
+          lastChatTimeAgo: new Date(0)
+        });
+      }
+    });
+
+    if (!Threads.findOne({ userId: Meteor.userId() })) {
+      Threads.insert({
+        userId: Meteor.userId(),
+        userUsernames: Meteor.user().username,
+        lastChatText: "Envoyer votre premier message a vous même !",
+        lastChatAt: new Date(0)
+      });
+    }
+  }
 });
