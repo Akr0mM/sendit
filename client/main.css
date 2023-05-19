@@ -8,7 +8,7 @@
   color: #dddddd;
 }
 
-.app {
+.chat {
   display: flex;
   width: 100vw;
   height: 100vh;
@@ -214,7 +214,7 @@
   right: -8px;
 }
 
-.chat {
+.chat-messages {
   background-color: #121212;
   width: 100%;
   height: calc(100vh - 57px - 3*8px);

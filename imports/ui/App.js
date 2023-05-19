@@ -1,17 +1,20 @@
 import { Template } from "meteor/templating";
 import { Threads } from "../api/messages/collections";
+import { FlowRouter } from 'meteor/kadira:flow-router';
 
 import "./App.html";
 import "./Chat.js";
 import "./Form.js";
 import "./Navbar.js";
 
+import './Login.js';
+import './Register.js';
+
 const IS_LOADING_STRING = "isLoading";
 
-// window.addEventListener('beforeunload', () => {
-//     // Appeler la méthode pour supprimer l'identifiant de thread courant
-//     Meteor.call('removeCurrentThreadId');
-// });
+window.addEventListener('beforeunload', () => {
+  Meteor.call('removeCurrentThreadId');
+});
 
 window.addEventListener("load", () => {
   Meteor.call("userOnline");
@@ -21,7 +24,7 @@ window.addEventListener("beforeunload", () => {
   Meteor.call("userOffline");
 });
 
-Template.chat.onCreated(function chatContainerOnCreated() {
+Template.chatMessages.onCreated(function chatContainerOnCreated() {
   this.state = new ReactiveDict();
 
   const handlerThreads = Meteor.subscribe("threads");
@@ -32,14 +35,20 @@ Template.chat.onCreated(function chatContainerOnCreated() {
   });
 });
 
-Template.chat.helpers({
+Template.chatMessages.helpers({
   isLoading() {
     const instance = Template.instance();
     return instance.state.get(IS_LOADING_STRING);
   },
 });
 
-Template.show.helpers({
+Template.chat.onCreated(function () {
+  Accounts.onLogout(function () {
+    FlowRouter.go('/login');
+  });
+});
+
+Template.chat.helpers({
   openChat() {
     return Meteor.user()?.profile?.currentThreadId;
   },

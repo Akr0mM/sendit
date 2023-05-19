@@ -1,9 +1,9 @@
-<body>
-  {{> show}}
-</body>
+<template name="app">
+  {{> Template.dynamic template=mainTemplate}}
+</template>
 
-<template name="show">
-  <div class="app">
+<template name="chat">
+  <div class="chat">
     {{> navbar}} {{#if openChat}} {{> chatOpen}} {{else}} {{> chatClose}}
     {{/if}}
   </div>
@@ -12,7 +12,7 @@
 <template name="chatOpen">
   <div class="chat-container">
     <div class="group-name">Talking to : {{currentGroupName}}</div>
-    <div class="chat">{{> chat}} {{> form}}</div>
+    <div class="chat-messages">{{> chatMessages}} {{> form}}</div>
   </div>
 </template>
 

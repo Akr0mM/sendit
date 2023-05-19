@@ -3,7 +3,7 @@ import { Messages } from '../api/messages/collections';
 
 import './Chat.html';
 
-Template.chat.helpers({
+Template.chatMessages.helpers({
     messages() {
         const currentThreadId = Meteor.user()?.profile?.currentThreadId;
         if (!currentThreadId) return [];
