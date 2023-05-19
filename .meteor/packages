@@ -28,7 +28,5 @@ reactive-dict
 session
 accounts-base
 accounts-ui
-accounts-google
-accounts-facebook
-google-config-ui
-facebook-config-ui
+kadira:flow-router
+kadira:blaze-layout
