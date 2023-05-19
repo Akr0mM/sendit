@@ -1,0 +1,56 @@
+body {
+  background-color: #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.login-container {
+  background-color: #121212;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+h1 {
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #ffffff;
+  border: none;
+  border-radius: 3px;
+}
+
+button[type="submit"] {
+  background-color: #ffffff;
+  color: #000000;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.register-link {
+  color: #ffffff;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.register-link a {
+  color: #ffffff;
+}
