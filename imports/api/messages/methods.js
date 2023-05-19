@@ -99,5 +99,23 @@ Meteor.methods({
         lastChatAt: new Date(0)
       });
     }
+  },
+
+  appCreateUser(email, username, password) {
+    if (Meteor.users.findOne({ 'emails.address': email }) || Meteor.users.findOne({ username: username })) {
+      throw new Meteor.Error('user-already-exists', 'A user with the same email or username already exists.');
+    }
+
+    const user = {
+      email: email,
+      username: username,
+      password: password,
+      profile: {
+        isOnline: true
+      }
+    };
+
+    const userId = Accounts.createUser(user);
+    return userId;
   }
 });
