@@ -16,7 +16,7 @@ body {
 }
 
 h1 {
-  color: #ffffff;
+  color: #dddddd;
   text-align: center;
   margin-bottom: 20px;
 }
@@ -30,14 +30,31 @@ input[type="password"] {
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
-  background-color: #ffffff;
+  background-color: #cccccc !important;
+  color: #121212;
   border: none;
   border-radius: 3px;
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #cccccc inset !important;
+}
+
+input:-webkit-autofill {
+  -webkit-text-fill-color: #121212 !important;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  outline: none;
+}
+
 button[type="submit"] {
-  background-color: #ffffff;
-  color: #000000;
+  background-color: #cccccc;
+  color: #121212;
   padding: 10px 20px;
   border: none;
   border-radius: 3px;
@@ -46,11 +63,19 @@ button[type="submit"] {
 }
 
 .register-link {
-  color: #ffffff;
+  color: #dddddd;
   text-align: center;
   margin-top: 10px;
 }
 
 .register-link a {
-  color: #ffffff;
+  color: #dddddd;
+}
+
+.incorrect-input::placeholder {
+  color: #ff0000;
+}
+
+.incorrect-input {
+  caret-color: transparent;
 }
