@@ -4,7 +4,11 @@
 
 <template name="chat">
   <div class="chat">
-    {{> navbar}} {{#if openChat}} {{> chatOpen}} {{else}} {{> chatClose}}
+    {{> navbar}}
+    {{#if openChat}}
+    {{> chatOpen}}
+    {{else}}
+    {{> chatClose}}
     {{/if}}
   </div>
 </template>
