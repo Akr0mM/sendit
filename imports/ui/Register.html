@@ -1,14 +1,14 @@
 <template name="register">
     <div class="register-container">
-        <h1>Create an Account</h1>
+        <h1>Créer un compte</h1>
         <form class="register-form">
-            <input type="text" name="username" placeholder="Username">
-            <input type="email" name="email" placeholder="Email">
-            <input type="password" name="password" placeholder="Password">
-            <button type="submit">Register</button>
+            <input type="text" name="username" placeholder="Nom d'utilisateur" autocomplete="off">
+            <input type="email" name="email" placeholder="Email" autocomplete="off">
+            <input type="password" name="password" placeholder="Mot de passe" autocomplete="off">
+            <button type="submit">Créer un compte</button>
         </form>
         <div class="login-link">
-            Already have an account? <a href="/login">Login</a>
+            Vous avez déjà un compte? <a href="/login">Se connecter</a>
         </div>
     </div>
 </template>
