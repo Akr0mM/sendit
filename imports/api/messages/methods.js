@@ -46,12 +46,6 @@ Meteor.methods({
     }
   },
 
-  removeCurrentThreadId() {
-    Meteor.users.update(Meteor.userId(), {
-      $unset: { "profile.currentThreadId": "" },
-    });
-  },
-
   userOnline() {
     Meteor.users.update(Meteor.userId(), {
       $set: { "profile.isOnline": true },
@@ -90,20 +84,15 @@ Meteor.methods({
         });
       }
     });
-
-    if (!Threads.findOne({ userId: Meteor.userId() })) {
-      Threads.insert({
-        userId: Meteor.userId(),
-        userUsernames: Meteor.user().username,
-        lastChatText: "Envoyer votre premier message a vous même !",
-        lastChatAt: new Date(0)
-      });
-    }
   },
 
   appCreateUser(email, username, password) {
-    if (Meteor.users.findOne({ 'emails.address': email }) || Meteor.users.findOne({ username: username })) {
-      throw new Meteor.Error('user-already-exists', 'A user with the same email or username already exists.');
+    if (Meteor.users.findOne({ username: username })) {
+      throw new Meteor.Error('username-already-exists', 'A user with the same email already exists');
+    }
+
+    if (Meteor.users.findOne({ 'emails.address': email })) {
+      throw new Meteor.Error('email-already-exists', 'A user with the same username already exists');
     }
 
     const user = {
