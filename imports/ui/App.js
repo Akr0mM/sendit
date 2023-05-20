@@ -12,10 +12,6 @@ import './Register.js';
 
 const IS_LOADING_STRING = "isLoading";
 
-window.addEventListener('beforeunload', () => {
-  Meteor.call('removeCurrentThreadId');
-});
-
 window.addEventListener("load", () => {
   Meteor.call("userOnline");
 });
