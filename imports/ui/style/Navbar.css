@@ -1,0 +1,45 @@
+.profile-button {
+  position: relative;
+}
+
+.btn-profile {
+  background-color: #1e1e1e;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  border: none;
+  font-size: 30px;
+}
+
+.dropdown-menu {
+  background-color: #121212;
+  display: none;
+  position: absolute;
+  top: 100%;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 1);
+  border-radius: 10px;
+  width: 300px;
+  height: min-content;
+}
+
+.dropdown-list {
+  padding: 0;
+  margin: 0;
+}
+
+.dropdown-list > li {
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.dropdown-list > li:hover {
+  cursor: pointer;
+  background-color: #212121;
+}
+
+.blur {
+  filter: blur(10px);
+  pointer-events: none;
+  user-select: none;
+}
