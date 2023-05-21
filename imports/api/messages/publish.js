@@ -1,11 +1,6 @@
 import { Meteor } from 'meteor/meteor';
-import { Messages } from './collections';
-import { Threads } from './collections';
+import { Messages, Threads } from './collections';
 
-Meteor.publish('messages', function publishMessages() {
-  return Messages.find({});
-});
+Meteor.publish('messages', () => Messages.find({}));
 
-Meteor.publish('threads', function publishThreads() {
-  return Threads.find({});
-});
+Meteor.publish('threads', () => Threads.find({}));
