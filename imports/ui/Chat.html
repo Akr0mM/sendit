@@ -1,24 +1,36 @@
 <template name="chatMessages">
-  {{#if currentUser}} {{#if isLoading}}
+  {{#if isLoading}}
   <div class="loading">Loading...</div>
   {{/if}}
-  <ul class="messages-list">
-    {{#each messages}} {{> message}} {{/each}}
-  </ul>
-  {{else}}
-  <div class="not-login">Please log in to start messaging</div>
-  {{/if}}
+  <div style="width: 100%; display: flex; justify-content: center;">
+    <ul class="messages-list">
+      <div class="firstMessageInChat firstMessageSent">Envoyer votre premier message a : {{groupName}} !!!</div>
+      {{#each messagesGroups}} {{> messageGroup}} {{/each}}
+    </ul>
+  </div>
 </template>
 
-<template name="message">
-  <li class="messages-container">
-    <div class="messages">
-      {{#if senderTagNeeded}}
-      <header class="sender-tag">{{getAuthorUsername}} :</header>
+
+<template name="messageGroup">
+  <li class="message-group">
+    <div class="message-group-container">
+      {{#if showTimestamp}}
+      <div
+        style="width: 100%; text-align: center; font-size: 10px; font-weight: 500; letter-spacing: 1px; line-height: 1.2;">
+        <span class="timestamp">{{timestamp}}</span>
+      </div>
       {{/if}}
-      <ul class="message-list">
-        <li><span>{{text}}</span></li>
+      <header class="{{#if isMyMessage}}my-message-author{{else}}message-author-a{{/if}}">{{authorUsername}}</header>
+      <ul class="{{#if isMyMessage}}my-message-border{{else}}message-border-a{{/if}} message">
+        {{#each messages}} {{> message}} {{/each}}
       </ul>
     </div>
+  </li>
+</template>
+
+
+<template name="message">
+  <li class="message-container">
+    <div style="padding-right: 10px;">{{text}}</div>
   </li>
 </template>
