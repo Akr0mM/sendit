@@ -1,6 +1,8 @@
 <template name="navbar">
   <div class="navbar" style="user-select: none">
-    <header class="navbar-header">{{> loginButtons}}</header>
+    <header class="navbar-header">
+      {{> profileButton}}
+    </header>
 
     <div class="last-chats-container">
       <header class="last-chats-header">
@@ -56,15 +58,31 @@
 </template>
 
 <template name="chatWithUsers">
-  <li class="user-chat">
+  <li class="user-chat {{#if isSelect selectThreadId}}selected-chat{{/if}}">
     <div class="user-chat-container">
       <span class="user-chat-pp"></span>
       <div class="user-chat-info">
         <div class="user-chat-username">{{username}}</div>
         <div class="user-chat-message">
-          {{lastChatText}}&nbsp;&nbsp;•&nbsp;&nbsp;{{lastChatTimeAgo}}
+          {{lastChatText}}{{lastChatTimeAgo}}
         </div>
       </div>
     </div>
   </li>
+</template>
+
+<template name="profileButton">
+  <div class="profile-button">
+    <button class="btn-profile">{{profilePicture}}</button>
+    <div class="dropdown-menu">
+      <ul class="dropdown-list">
+        <li class="account-settings">Paramètre du compte</li>
+        <li>{{> logoutButton}}</li>
+      </ul>
+    </div>
+  </div>
+</template>
+
+<template name="logoutButton">
+  <div class="logout-button" style="color: #f23c57">Déconnexion</div>
 </template>
