@@ -2,6 +2,7 @@ import { Template } from 'meteor/templating';
 import moment from 'moment';
 import { Messages } from '../api/messages/collections';
 
+import './style/Chat.css';
 import './Chat.html';
 
 Template.chatMessages.helpers({
@@ -67,13 +68,14 @@ Template.chatMessages.helpers({
         const lastGroupMessageDate = moment(currentGroup.lastMessage.createdAt);
         const currentGroupDate = moment(currentGroup.firstMessageTime);
 
-        const diffInDays = currentGroupDate.diff(lastGroupMessageDate, 'days');
+        const lastDateDay = moment(lastGroupMessageDate).format('YYYY-MM-DD');
+        const currentDateDay = moment(currentGroupDate).format('YYYY-MM-DD');
         const diffInHours = currentGroupDate.diff(
           lastGroupMessageDate,
           'hours',
         );
 
-        if (diffInDays > 0) {
+        if (lastDateDay !== currentDateDay) {
           currentGroup.showTimestamp = true;
           const day = moment(currentGroupDate).get('date');
           const monthIndex = moment(currentGroupDate).get('month');
@@ -83,6 +85,7 @@ Template.chatMessages.helpers({
           currentGroup.showTimestamp = true;
           const hour = moment(currentGroupDate).get('hour');
           let minute = moment(currentGroupDate).get('minute');
+          // @ts-ignore
           if (minute < 10) minute = `0${minute}`;
           currentGroup.timestamp = `${hour}:${minute}`;
         } else {
@@ -101,10 +104,6 @@ Template.chatMessages.helpers({
     }
 
     return messagesGroups;
-  },
-
-  groupName() {
-    return 'Test';
   },
 });
 

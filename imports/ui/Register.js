@@ -22,30 +22,32 @@ Template.register.events({
       usernameValue,
       passwordValue,
       err => {
-        if (err.error === 'username-already-exists') {
-          username.value = '';
-          username.placeholder = 'Nom d\'utilisateur déjà pris !';
-          username.classList.add('incorrect-input');
-          username.addEventListener('input', () => {
-            username.classList.remove('incorrect-input');
-            username.placeholder = 'Nom d\'utilisateur';
-          });
-        }
+        if (err) {
+          if (err.error === 'username-already-exists') {
+            username.value = '';
+            username.placeholder = 'Nom d\'utilisateur déjà pris !';
+            username.classList.add('incorrect-input');
+            username.addEventListener('input', () => {
+              username.classList.remove('incorrect-input');
+              username.placeholder = 'Nom d\'utilisateur';
+            });
+          }
 
-        if (err.error === 'email-already-exists') {
-          email.value = '';
-          email.placeholder = 'Email déjà pris !';
-          email.classList.add('incorrect-input');
-          email.addEventListener('input', () => {
-            email.classList.remove('incorrect-input');
-            email.placeholder = 'Email';
-          });
-        }
+          if (err.error === 'email-already-exists') {
+            email.value = '';
+            email.placeholder = 'Email déjà pris !';
+            email.classList.add('incorrect-input');
+            email.addEventListener('input', () => {
+              email.classList.remove('incorrect-input');
+              email.placeholder = 'Email';
+            });
+          }
 
-        if (!err) {
-          Meteor.loginWithPassword(emailValue, passwordValue, err => {
-            if (err) {
-              console.log('loginWithPassword', err);
+          console.log('appCreateUser', err);
+        } else {
+          Meteor.loginWithPassword(emailValue, passwordValue, error => {
+            if (error) {
+              console.log('loginWithPassword', error);
             } else {
               FlowRouter.go('/chat');
             }

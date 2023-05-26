@@ -10,7 +10,7 @@
   align-items: center;
 }
 
-h1 {
+.title {
   color: #dddddd;
   text-align: center;
   margin-bottom: 20px;
@@ -22,9 +22,7 @@ h1 {
   flex-direction: column;
 }
 
-.register-form input[type="text"],
-.register-form input[type="email"],
-.register-form input[type="password"] {
+.input-register {
   padding: 10px;
   margin-bottom: 10px;
   background-color: #cccccc;
@@ -33,20 +31,20 @@ h1 {
   border-radius: 3px;
 }
 
-input[type="text"]:focus,
-input[type="password"]:focus,
-input[type="email"]:focus {
+.input-register:focus,
+.input-register:focus,
+.input-register:focus {
   outline: none;
 }
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
+.input-register:-webkit-autofill,
+.input-register:-webkit-autofill:hover,
+.input-register:-webkit-autofill:focus,
+.input-register:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 30px #cccccc inset !important;
 }
 
-input:-webkit-autofill {
+.input-register:-webkit-autofill {
   -webkit-text-fill-color: #121212 !important;
 }
 

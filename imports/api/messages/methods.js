@@ -1,6 +1,15 @@
 import { Meteor } from 'meteor/meteor';
+import { Accounts } from 'meteor/accounts-base';
 import { check } from 'meteor/check';
 import { Messages, Threads } from './collections';
+
+function isValidUsername(username) {
+  if (username) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 Meteor.methods({
   'messages.insert'(text) {
@@ -113,10 +122,46 @@ Meteor.methods({
       password,
       profile: {
         isOnline: true,
+        currentThreadId: null,
+        pictureId: null,
       },
     };
 
     const userId = Accounts.createUser(user);
     return userId;
+  },
+
+  changeUsername(newUsername, currentPassword) {
+    check(newUsername, String);
+    check(currentPassword, String);
+
+    // Vérifier si le nouveau nom d'utilisateur est valide (ajoutez vos propres validations ici)
+    if (!isValidUsername(newUsername)) {
+      throw new Meteor.Error(
+        'invalid-username',
+        'Le nom d\'utilisateur est invalide.',
+      );
+    }
+
+    // Vérifier si le mot de passe actuel est correct
+    const user = Meteor.user();
+    const passwordCorrect = Accounts._checkPassword(user, currentPassword);
+    if (!passwordCorrect) {
+      throw new Meteor.Error(
+        'incorrect-password',
+        'Le mot de passe actuel est incorrect.',
+      );
+    }
+
+    // Effectuer le changement de nom d'utilisateur
+    try {
+      Accounts.setUsername(Meteor.userId(), newUsername);
+      // Vous pouvez également mettre à jour d'autres champs de l'utilisateur si nécessaire
+    } catch (error) {
+      throw new Meteor.Error(
+        'username-update-failed',
+        'Échec de la mise à jour du nom d\'utilisateur.',
+      );
+    }
   },
 });

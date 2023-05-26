@@ -1,25 +1,21 @@
-<template name="app">
-  {{> Template.dynamic template=mainTemplate}}
-</template>
+<template name="app"> {{> Template.dynamic template=mainTemplate}} </template>
 
 <template name="chat">
-  <div class="chat blur">
-    {{> navbar}}
-    {{#if openChat}}
-    {{> chatOpen}}
-    {{else}}
-    {{> chatClose}}
+  <div class="chat">
+    {{> navbar}} {{#if openChat}} {{> chatOpen}} {{else}} {{> chatClose}}
     {{/if}}
   </div>
 
-  <!-- {{#if showModal}} -->
-  {{> accountSettingsModal}}
-  <!-- {{/if}} -->
+  {{#if showModal}} {{> accountSettingsModal}} {{/if}}
 </template>
 
 <template name="chatOpen">
   <div class="chat-container">
-    <div class="group-name">Talking to : {{currentGroupName}}</div>
+    <div class="header-group-names" id="group-names">
+      <div class="group-names">
+        {{#each groupNames}} {{> groupName}} {{/each}}
+      </div>
+    </div>
     <div class="chat-messages">{{> chatMessages}} {{> form}}</div>
   </div>
 </template>
@@ -30,52 +26,9 @@
   </div>
 </template>
 
-<template name="accountSettingsModal">
-  <div class="account-settings-modal">
-    <div class="modal-container">
-      <header class="modal-title">Paramètre du compte</header>
-      <div class="profile-content">
-        <div class="content-left">
-          {{> uploadForm}}
-          {{#if currentProfilePicture}}
-          <img class="current-pp" src="{{profilePicture.link}}" alt="{{profilePicture.name}}">
-          {{else}}
-          <span class="current-pp">{{firstLetter}}</span>
-          {{/if}}
-        </div>
-        <div class="content-right">
-          <div>Username</div>
-          <div>Email</div>
-          <div>Password</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="close-modal-container">
-      <div class="close-modal">Fermer</div>
-    </div>
+<template name="groupName">
+  <div class="group-name-container">
+    <div class="group-profile-picture">{{profilePicture}}</div>
+    <div class="group-username">{{username}}</div>
   </div>
-</template>
-
-
-<template name="uploadForm">
-  {{#with currentUpload}}
-  {{else}}
-  <label for="fileInput" style="position: fixed;">
-    {{#if confirmation}}
-    <span class="material-symbols-outlined" name="uploadIcon" id="close-icon">close
-    </span>
-    {{else}}
-    <span class="material-symbols-outlined" id="upload-icon">upload</span>
-    {{/if}}
-  </label>
-  <input id="fileInput" type="file" style="visibility:hidden;position: absolute;" accept="image/png, image/jpeg" />
-  {{#if confirmation}}
-  <div id="confirmation" style="position: fixed;">
-    <span class="material-symbols-outlined" id="done-icon">
-      done
-    </span>
-  </div>
-  {{/if}}
-  {{/with}}
 </template>

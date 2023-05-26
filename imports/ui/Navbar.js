@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { Template } from 'meteor/templating';
 import { Threads } from '../api/messages/collections';
+import { ProfilePictures } from '../api/users/ProfilePictures';
 import 'moment/locale/fr';
 
 import './Navbar.html';
@@ -9,13 +10,13 @@ import './style/Navbar.css';
 moment.updateLocale('fr', {
   relativeTime: {
     future: 'dans %s',
-    s: '%d s',
-    m: '%d m',
-    mm: '%d m',
-    h: '%d h',
-    hh: '%d h',
-    d: '%d j',
-    dd: '%d j',
+    s: '%ds',
+    m: '%dm',
+    mm: '%dm',
+    h: '%dh',
+    hh: '%dh',
+    d: '%dj',
+    dd: '%dj',
   },
 });
 
@@ -82,7 +83,16 @@ Template.navbar.helpers({
         if (moment().diff(lastChatAt, 'seconds') < 10) {
           lastChatTimeAgo = 'à l\'instant';
         } else if (moment().diff(lastChatAt, 'days') < 7) {
-          lastChatTimeAgo = lastChatAt.locale('fr').fromNow(true);
+          if (
+            moment().diff(lastChatAt, 'days') === 0 &&
+            moment().diff(lastChatAt, 'hours') > 0
+          ) {
+            lastChatTimeAgo = `${moment()
+              .diff(lastChatAt, 'hours')
+              .toString()}h`;
+          } else {
+            lastChatTimeAgo = lastChatAt.locale('fr').fromNow(true);
+          }
         } else {
           lastChatTimeAgo = lastChatAt.locale('fr').format('L');
         }
@@ -96,6 +106,19 @@ Template.navbar.helpers({
       }
       const newUser = {};
       Object.assign(newUser, user);
+      newUser.profilePictureId = Meteor.users.findOne({
+        _id: newUser._id,
+      }).profile?.pictureId;
+      if (newUser.profilePictureId) {
+        newUser.profilePicture = ProfilePictures.findOne({
+          _id: newUser.profilePictureId,
+        });
+      }
+      if (newUser && newUser.username) {
+        newUser.firstLetter = newUser.username.charAt(0);
+      } else {
+        newUser.firstLetter = '';
+      }
       newUser.selectThreadId = threadId;
       // @ts-ignore
       newUser.lastChatText = thread?.lastChatText;
@@ -137,14 +160,6 @@ Template.navbar.events({
   },
 });
 
-Template.logoutButton.events({
-  'click .logout-button'(event) {
-    event.preventDefault();
-
-    Meteor.logout();
-  },
-});
-
 Template.profileButton.events({
   'click .btn-profile'(event, templateInstance) {
     templateInstance.$('.dropdown-menu').toggle(); // Afficher ou masquer le menu déroulant
@@ -154,10 +169,30 @@ Template.profileButton.events({
     templateInstance.$('.dropdown-menu').toggle();
     Session.set('showModal', true);
   },
+  'click .logout-button'(event) {
+    event.preventDefault();
+
+    Meteor.logout();
+  },
 });
 
 Template.profileButton.helpers({
-  profilePicture() {
-    return 'M';
+  currentProfilePicture() {
+    return Meteor.user()?.profile?.pictureId;
   },
+
+  profilePicture() {
+    const profilePictureId = Meteor.user()?.profile?.pictureId;
+    const profilePicture = ProfilePictures.findOne({ _id: profilePictureId });
+    return profilePicture;
+  },
+
+  firstLetter() {
+    const user = Meteor.user();
+    if (user && user.username) {
+      return user.username.charAt(0);
+    }
+    return '';
+  },
+
 });

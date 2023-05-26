@@ -15,7 +15,7 @@ body {
   margin: 0 auto;
 }
 
-h1 {
+.title {
   color: #dddddd;
   text-align: center;
   margin-bottom: 20px;
@@ -25,8 +25,7 @@ form {
   margin-bottom: 20px;
 }
 
-input[type="text"],
-input[type="password"] {
+.input-login {
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
@@ -36,23 +35,23 @@ input[type="password"] {
   border-radius: 3px;
 }
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
+.input-login:-webkit-autofill,
+.input-login:-webkit-autofill:hover,
+.input-login:-webkit-autofill:focus,
+.input-login:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 30px #cccccc inset !important;
 }
 
-input:-webkit-autofill {
+.input-login:-webkit-autofill {
   -webkit-text-fill-color: #121212 !important;
 }
 
-input[type="text"]:focus,
-input[type="password"]:focus {
+.input-login[type="text"]:focus,
+.input-login[type="password"]:focus {
   outline: none;
 }
 
-button[type="submit"] {
+#login-button {
   background-color: #cccccc;
   color: #121212;
   padding: 10px 20px;

@@ -2,6 +2,7 @@ import { Template } from 'meteor/templating';
 import { Meteor } from 'meteor/meteor';
 import '../api/messages/methods';
 
+import './style/Form.css';
 import './Form.html';
 
 Template.form.events({

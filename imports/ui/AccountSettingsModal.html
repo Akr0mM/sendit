@@ -1,0 +1,102 @@
+<template name="accountSettingsModal">
+  <div class="account-settings-modal">
+    <div class="modal-container">
+      <header class="modal-title">Paramètres du compte</header>
+      <div class="profile-content">
+        <div class="content-left">
+          {{> uploadForm}} {{#if currentProfilePicture}}
+          <img
+            class="current-pp"
+            src="{{profilePicture.link}}"
+            alt="{{profilePicture.name}}"
+          />
+          {{else}}
+          <span class="current-pp">{{firstLetter}}</span>
+          {{/if}}
+        </div>
+        <div class="content-right">
+          <div class="profile-info" style="margin-bottom: 20px; display: flex">
+            <div>
+              <div class="info-label username-label">NOM D'UTILISATEUR</div>
+              <div class="email-info user-info">{{currentUserUsername}}</div>
+            </div>
+            <div class="modify-info-username modify-info" style="left: 383px">
+              Modifier
+            </div>
+          </div>
+          <div class="profile-info" style="display: flex">
+            <div>
+              <div class="info-label email-label">E-MAIL</div>
+              <div class="email-info user-info">{{currentUserEmail}}</div>
+            </div>
+            <div class="modify-info-email modify-info" style="left: 250px">
+              Modifier
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="close-modal-container">
+      <div class="close-modal">Fermer</div>
+    </div>
+  </div>
+
+  {{#if showModifyUsername}}
+  {{> modifyUsernameModal}}
+  <!-- {{> modifyEmailModal}} -->
+  {{/if}}
+</template>
+
+<template name="uploadForm">
+  {{#with currentUpload}} {{else}}
+  <label for="fileInput" style="position: fixed">
+    {{#if confirmation}}
+    <span class="material-symbols-outlined" name="uploadIcon" id="close-icon"
+      >close
+    </span>
+    {{else}}
+    <span class="material-symbols-outlined" id="upload-icon">upload</span>
+    {{/if}}
+  </label>
+  <input
+    id="fileInput"
+    type="file"
+    style="visibility: hidden; position: absolute"
+    accept="image/png, image/jpeg"
+  />
+  {{#if confirmation}}
+  <div id="confirmation" style="position: fixed">
+    <span class="material-symbols-outlined" id="done-icon"> done </span>
+  </div>
+  {{/if}} {{/with}}
+</template>
+
+<template name="modifyUsernameModal">
+  <div class="black-out"></div>
+  <div class="modify-username-modal modify-modal">
+    <h2 class="title">Changer ton nom d'utilisateur</h2>
+    <p class="small-text">Saisis un nouveau nom d'utilisateur et ton mot de passe</p>
+
+    <form autocomplete="off">
+      <div class="form-group">
+        <label class="label-text" for="new-username">Nouveau nom d'utilisateur</label>
+        <input type="text" id="new-username" class="input-field" placeholder="{{currentUserUsername}}" autocomplete="off" required>
+      </div>
+
+      <div class="form-group">
+        <label class="label-text" for="current-password">Mot de passe actuel</label>
+        <input type="password" id="current-password" class="input-field" autocomplete="off" required>
+      </div>
+
+      <div class="button-group">
+        <button type="button" class="btn btn-secondary cancel-btn">Annuler</button>
+        <button type="submit" class="btn btn-primary submit-btn">Terminer</button>
+      </div>
+    </form>
+  </div>
+</template>
+
+<template name="modifyEmailModal">
+
+</template>
