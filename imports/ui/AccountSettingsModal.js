@@ -120,6 +120,7 @@ Template.uploadForm.events({
         $set: { 'profile.pictureId': Session.get('previousProfilePicture') },
       });
     } else {
+      ProfilePictures.remove({ _id: Meteor.user().profile.pictureId });
       Meteor.users.update(Meteor.userId(), {
         $set: { 'profile.pictureId': null },
       });
@@ -128,6 +129,7 @@ Template.uploadForm.events({
 
   'click #done-icon'(event, templateInstance) {
     event.preventDefault();
+    ProfilePictures.remove({ _id: Session.get('previousProfilePicture') });
 
     templateInstance.confirmation.set(false);
   },
@@ -150,22 +152,17 @@ Template.modifyUsernameModal.events({
       .value.trim();
 
     // Appeler une méthode Meteor pour effectuer le changement de nom d'utilisateur
-    Meteor.call(
-      'changeUsername',
-      newUsername,
-      currentPassword,
-      (error, result) => {
-        if (error) {
-          // Gérer l'erreur (affichage d'un message d'erreur, etc.)
-          console.log('Une erreur s\'est produite :', error.reason);
-        } else {
-          // Succès du changement de nom d'utilisateur
-          console.log('Le nom d\'utilisateur a été modifié avec succès !');
-          // Réinitialiser le formulaire (facultatif)
-          templateInstance.find('form').reset();
-        }
-      },
-    );
+    Meteor.call('changeUsername', newUsername, currentPassword, error => {
+      if (error) {
+        // Gérer l'erreur (affichage d'un message d'erreur, etc.)
+        console.log('Une erreur s\'est produite :', error.reason);
+      } else {
+        // Succès du changement de nom d'utilisateur
+        console.log('Le nom d\'utilisateur a été modifié avec succès !');
+        // Réinitialiser le formulaire (facultatif)
+        templateInstance.find('form').reset();
+      }
+    });
   },
 
   'click .cancel-btn'(event) {
