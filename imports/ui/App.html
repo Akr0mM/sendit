@@ -28,7 +28,11 @@
 
 <template name="groupName">
   <div class="group-name-container">
-    <div class="group-profile-picture">{{profilePicture}}</div>
+    {{#if profilePictureId}}
+    <img class="group-profile-picture" src="{{profilePicture.link}}" alt="{{profilePicture.name}}" />
+    {{else}}
+    <span class="group-profile-picture">{{firstLetter}}</span>
+    {{/if}}
     <div class="group-username">{{username}}</div>
   </div>
 </template>

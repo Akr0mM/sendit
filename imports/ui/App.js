@@ -1,6 +1,8 @@
+// @ts-nocheck
 // @ts-ignore
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { Template } from 'meteor/templating';
+import { ProfilePictures } from '../api/users/ProfilePictures';
 import { Threads } from '../api/messages/collections';
 
 import './App.html';
@@ -65,12 +67,42 @@ Template.chat.helpers({
 
 Template.chatOpen.helpers({
   groupNames() {
-    // return [{ username: 'Alex' }, { username: 'Bot' }, { username: 'Maxime' }, { username: 'Test' }];
-    return [
-      { username: 'Alondmessagemaisboncpasgrave' },
-      { username: 'Bonjourlamiffvousallerbien?' },
-      { username: 'Maximeleplusbeaugossedetoutlestempscuynedinguerie' },
-      { username: 'Teslaoupasjveuxfaireuntestdelongétudeletsgoo' },
-    ];
+    const thread = Threads.findOne({
+      _id: Meteor.user().profile.currentThreadId,
+    });
+    if (!thread) return;
+    const threadUsersId = thread.usersId;
+    const index = threadUsersId.indexOf(Meteor.userId());
+    // eslint-disable-next-line no-unused-vars
+    const splice = threadUsersId.splice(index, 1);
+    const users = threadUsersId.map(userId => {
+      const User = Meteor.users.findOne({ _id: userId });
+      const user = {};
+      Object.assign(user, User);
+      user.firstLetter = user.username.charAt(0);
+      user.profilePictureId = user.profile.pictureId;
+      if (user.profilePictureId) {
+        user.profilePicture = ProfilePictures.findOne({
+          _id: user.profilePictureId,
+        });
+      }
+      return user;
+    });
+
+    // eslint-disable-next-line consistent-return
+    return users;
   },
+});
+
+Template.groupName.onRendered(() => {
+  const names = document.querySelector('.group-names');
+  names.addEventListener(
+    'wheel',
+    event => {
+      // @ts-ignore
+      const delta = event.deltaY;
+      names.scrollLeft += delta / 5;
+    },
+    { passive: true },
+  );
 });
