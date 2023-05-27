@@ -194,5 +194,4 @@ Template.profileButton.helpers({
     }
     return '';
   },
-
 });
