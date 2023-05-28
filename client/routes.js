@@ -1,14 +1,14 @@
+// @ts-ignore
 import { FlowRouter } from 'meteor/kadira:flow-router';
+// @ts-ignore
 import { BlazeLayout } from 'meteor/kadira:blaze-layout';
 
 FlowRouter.route('/', {
   triggersEnter: [
     function (context, redirect) {
-      if (!Meteor.userId()) {
+      FlowRouter.withReplaceState(() => {
         redirect('/chat');
-      } else {
-        redirect('/chat');
-      }
+      });
     },
   ],
 });
