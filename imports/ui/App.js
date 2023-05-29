@@ -72,19 +72,20 @@ Template.chatOpen.helpers({
     });
     if (!thread) return;
     const threadUsersId = thread.usersId;
-    const index = threadUsersId.indexOf(Meteor.userId());
-    // eslint-disable-next-line no-unused-vars
-    const splice = threadUsersId.splice(index, 1);
+    // const index = threadUsersId.indexOf(Meteor.userId());
+    // // eslint-disable-next-line no-unused-vars
+    // const splice = threadUsersId.splice(index, 1);
     const users = threadUsersId.map(userId => {
       const User = Meteor.users.findOne({ _id: userId });
       const user = {};
       Object.assign(user, User);
-      user.firstLetter = user.username.charAt(0);
-      user.profilePictureId = user.profile.pictureId;
+      user.profilePictureId = user?.profile?.pictureId;
       if (user.profilePictureId) {
         user.profilePicture = ProfilePictures.findOne({
           _id: user.profilePictureId,
         });
+      } else if (user && user.username) {
+        user.firstLetter = user.username.charAt(0);
       }
       return user;
     });
@@ -105,4 +106,13 @@ Template.groupName.onRendered(() => {
     },
     { passive: true },
   );
+});
+
+Template.groupName.events({
+  'click .group-name-container'(event, templateInstance) {
+    event.preventDefault();
+    templateInstance.$('.profile-dropdown-menu').toggle();
+
+    console.log(this);
+  },
 });
