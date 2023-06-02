@@ -109,10 +109,9 @@ Template.groupName.onRendered(() => {
 });
 
 Template.groupName.events({
-  'click .group-name-container'(event, templateInstance) {
+  'click .group-user-container'(event, templateInstance) {
     event.preventDefault();
     templateInstance.$('.profile-dropdown-menu').toggle();
-
     console.log(this);
   },
 });
