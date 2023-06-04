@@ -18,11 +18,13 @@ import './Register';
 const IS_LOADING_STRING = 'isLoading';
 
 window.addEventListener('load', () => {
-  Meteor.call('userOnline');
+  if (window.location.pathname === '/chat') {
+    Meteor.call('userOnline', true);
+  }
 });
 
 window.addEventListener('beforeunload', () => {
-  Meteor.call('userOffline');
+  Meteor.call('userOnline', false);
 });
 
 Template.chatMessages.onCreated(function chatContainerOnCreated() {

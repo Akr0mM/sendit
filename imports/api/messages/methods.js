@@ -55,15 +55,24 @@ Meteor.methods({
     }
   },
 
-  userOnline() {
+  userOnline(set) {
+    check(set, Boolean);
     Meteor.users.update(Meteor.userId(), {
-      $set: { 'profile.isOnline': true },
+      $set: { 'profile.status.isOnline': set },
     });
   },
 
-  userOffline() {
+  userAway(set) {
+    check(set, Boolean);
     Meteor.users.update(Meteor.userId(), {
-      $set: { 'profile.isOnline': false },
+      $set: { 'profile.status.isAway': set },
+    });
+  },
+
+  userInvisible(set) {
+    check(set, Boolean);
+    Meteor.users.update(Meteor.userId(), {
+      $set: { 'profile.status.isInvisible': set },
     });
   },
 
@@ -89,11 +98,25 @@ Meteor.methods({
         Threads.insert({
           usersId: [currentUser, targetUserId],
           usersUsernames: [currentUserUsername, targetUsername],
-          lastChatText: 'Envoyer votre premier message !',
+          lastChatText: null,
           lastChatAt: new Date(0),
           lastChatTimeAgo: new Date(0),
         });
       }
+    });
+
+    if (!Threads.findOne({ name: 'UPDATE' })) {
+      Threads.insert({
+        name: 'UPDATE',
+        updateThreadTimestamp: new Date(),
+      });
+    }
+  },
+
+  updateNavbarTimestamps() {
+    const updateThread = Threads.findOne({ name: 'UPDATE' });
+    Threads.update(updateThread._id, {
+      $set: { updateThreadTimestamp: new Date() },
     });
   },
 
@@ -121,7 +144,11 @@ Meteor.methods({
       username,
       password,
       profile: {
-        isOnline: true,
+        status: {
+          isOnline: true,
+          isAway: false,
+          isInvisible: false,
+        },
         currentThreadId: null,
         pictureId: null,
       },

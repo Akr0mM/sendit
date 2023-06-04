@@ -13,6 +13,12 @@
   background-color: #121212;
   border-radius: 10px;
   padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-header > div {
+  height: fit-content;
 }
 
 .last-chats-container {
@@ -107,11 +113,35 @@
   background-color: #1a1a1a;
 }
 
+.user-chat:hover .status-icon-background {
+  background-color: #1a1a1a;
+}
+
+.user-chat:hover .status-icon-invisible > div {
+  background-color: #1a1a1a;
+}
+
 .selected-chat {
   background-color: #232323;
 }
 
+.selected-chat .status-icon-background {
+  background-color: #232323;
+}
+
+.selected-chat .status-icon-invisible > div {
+  background-color: #232323;
+}
+
 .selected-chat:hover {
+  background-color: #393939;
+}
+
+.selected-chat:hover .status-icon-background {
+  background-color: #393939;
+}
+
+.selected-chat:hover .status-icon-invisible > div {
   background-color: #393939;
 }
 
@@ -147,6 +177,18 @@
   font-size: 30px;
 }
 
+.profile-picture {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 50%;
+  background-color: #808080;
+  font-size: 5rem;
+  object-fit: cover;
+}
+
 .dropdown-menu {
   background-color: #121212;
   display: none;
@@ -173,6 +215,50 @@
 .dropdown-list > li:hover {
   cursor: pointer;
   background-color: #212121;
+}
+
+.status-settings {
+  display: flex;
+  align-items: center;
+}
+
+.status-icon-background {
+  aspect-ratio : 1 / 1;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background-color: #121212;
+  transition: background-color 0.2s ease 0s;
+}
+
+.status-icon-online {
+  aspect-ratio : 1 / 1;
+  border-radius: 50%;
+  background-color: #23A559;
+}
+
+.status-icon-away {
+  aspect-ratio : 1 / 1;
+  border-radius: 50%;
+  background-color: #F23F42;
+}
+
+.status-icon-invisible {
+  aspect-ratio : 1 / 1;
+  border-radius: 50%;
+  background-color: #80848E;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.status-icon-invisible > div {
+  aspect-ratio : 1 / 1;
+  border-radius: 50%;
+  background-color: #121212;
+  transition: background-color 0.2s ease 0s;
 }
 
 .blur {

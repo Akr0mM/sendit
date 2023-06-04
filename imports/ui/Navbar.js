@@ -8,17 +8,23 @@ import './Navbar.html';
 import './style/Navbar.css';
 
 moment.updateLocale('fr', {
-  relativeTime: {
-    future: 'dans %s',
-    s: '%ds',
-    m: '%dm',
-    mm: '%dm',
-    h: '%dh',
-    hh: '%dh',
-    d: '%dj',
-    dd: '%dj',
-  },
+  relativeTime: { s: '%ds', m: '%dm' },
 });
+
+const months = [
+  'janv.',
+  'fevr.',
+  'mars',
+  'avr.',
+  'mai',
+  'juin',
+  'juil.',
+  'aout',
+  'sept.',
+  'oct.',
+  'nov.',
+  'dec.',
+];
 
 let selectedChat;
 
@@ -28,36 +34,23 @@ Template.navbar.onCreated(function () {
 
 Template.navbar.onRendered(() => {
   Meteor.call('initThreads');
+  setInterval(() => {
+    Meteor.call('updateNavbarTimestamps');
+  }, 25000);
 });
 
 Template.navbar.helpers({
   chats() {
-    // Créer tous les threads qui n'existent pas déjà
-    Meteor.call('initThreads');
-
+    // eslint-disable-next-line no-unused-vars
+    const updateTimestamps = Threads.findOne({ name: 'UPDATE' });
     const userId = Meteor.userId();
-    const users = Meteor.users.find({ _id: { $ne: Meteor.userId() } }).fetch();
     const threads = [];
 
     // Trouver tous les threads existants et stocker la date du dernier message et le dernier message pour chaque thread
     Threads.find({ usersId: userId }).forEach(thread => {
       const otherUserId = thread?.usersId?.find(id => id !== userId);
       const lastChatAt = thread?.lastChatAt || undefined;
-      const lastChatText =
-        thread?.lastChatText || 'Envoyer votre premier message !';
-      threads.push({ userId: otherUserId, lastChatAt, lastChatText });
-    });
-
-    // Ajouter les utilisateurs avec lesquels il n'y a pas de threads existants
-    users.forEach(user => {
-      const otherUserId = user._id;
-      if (!threads.some(thread => thread.userId === otherUserId)) {
-        threads.push({
-          userId: otherUserId,
-          lastChatAt: new Date(0),
-          lastChatText: 'Envoyer votre premier message !',
-        });
-      }
+      threads.push({ userId: otherUserId, lastChatAt });
     });
 
     // Trier les threads par date du dernier message et récupérer les utilisateurs correspondants
@@ -66,10 +59,10 @@ Template.navbar.helpers({
     );
 
     // Trouver le dernier message du thread et le stocker dans chaque utilisateur
-    let userLastChat = sortedUsers.map(user => {
+    let usersLastChat = sortedUsers.map(user => {
       if (!user) return;
       let threadId;
-      let thread = Threads.findOne({
+      const thread = Threads.findOne({
         $or: [
           { usersId: { $all: [Meteor.userId(), user?._id] } },
           { usersId: { $all: [user?._id, Meteor.userId()] } },
@@ -90,19 +83,29 @@ Template.navbar.helpers({
             lastChatTimeAgo = `${moment()
               .diff(lastChatAt, 'hours')
               .toString()}h`;
-          } else {
+          } else if (moment().diff(lastChatAt, 'minutes') === 0) {
             lastChatTimeAgo = lastChatAt.locale('fr').fromNow(true);
+          } else {
+            lastChatTimeAgo = `${moment()
+              .diff(lastChatAt, 'minutes')
+              .toString()}m`;
           }
-        } else {
-          lastChatTimeAgo = lastChatAt.locale('fr').format('L');
+        } else if (moment().diff(lastChatAt, 'years') === 0) {
+          const day = lastChatAt.get('date');
+          const monthIndex = lastChatAt.get('month');
+          const month = months[monthIndex];
+          lastChatTimeAgo = `${day} ${month}`;
+        } else if (moment().diff(lastChatAt, 'years') === 1) lastChatTimeAgo = `il y a 1 an`;
+        else {
+          lastChatTimeAgo = `il y a ${moment().diff(lastChatAt, 'years')} ans`;
         }
         threadId = thread._id;
         thread.lastChatTimeAgo = lastChatTimeAgo;
       } else {
-        thread = {
-          usersId: [Meteor?.userId(), user?._id],
-          lastChatText: 'Envoyer votre premier message !',
-        };
+        throw new Meteor.Error(
+          'Thread not founded',
+          'thread is undefined : l. 106',
+        );
       }
       const newUser = {};
       Object.assign(newUser, user);
@@ -120,8 +123,6 @@ Template.navbar.helpers({
         newUser.firstLetter = '';
       }
       newUser.selectThreadId = threadId;
-      // @ts-ignore
-      newUser.lastChatText = thread?.lastChatText;
       if (
         thread?.lastChatTimeAgo === moment(new Date(0)).locale('fr').format('L')
       ) {
@@ -130,12 +131,31 @@ Template.navbar.helpers({
         // @ts-ignore
       } else newUser.lastChatTimeAgo = `  •  ${thread?.lastChatTimeAgo}`;
 
+      if (thread?.lastChatText) {
+        newUser.lastChatText = thread?.lastChatText;
+      } else {
+        newUser.lastChatText = 'Envoyer votre premier message !';
+        newUser.lastChatTimeAgo = '';
+      }
+
+      // status of the user
+      if (
+        !newUser?.profile?.status?.isOnline ||
+        newUser?.profile?.status?.isInvisible
+      ) {
+        newUser.statusIcon = `<div class="status-icon-background" style="width: 18px; left: 39px; top: -17px;"><div class="status-icon-invisible" style="width: 12px;"><div style="width: 6px;"></div></div>`;
+      } else if (newUser?.profile?.status?.isAway) {
+        newUser.statusIcon = `<div class="status-icon-background" style="width: 18px; left: 39px; top: -17px;"><div class="status-icon-away" style="width: 12px;"</div></div>`;
+      } else if (newUser?.profile?.status?.isOnline) {
+        newUser.statusIcon = `<div class="status-icon-background" style="width: 18px; left: 39px; top: -17px;"><div class="status-icon-online" style="width: 12px;"></div></div>`;
+      } else newUser.statusIcon = '';
+
       // eslint-disable-next-line consistent-return
       return newUser;
     });
 
-    userLastChat = userLastChat.filter(element => element !== undefined);
-    return userLastChat;
+    usersLastChat = usersLastChat.filter(element => element !== undefined);
+    return usersLastChat;
   },
 });
 
@@ -169,10 +189,31 @@ Template.profileButton.events({
     templateInstance.$('.dropdown-menu').toggle();
     Session.set('showModal', true);
   },
+
   'click .logout-button'(event) {
     event.preventDefault();
 
+    Meteor.call('userOnline', false);
+
     Meteor.logout();
+  },
+
+  'click .status-settings'(event) {
+    event.preventDefault();
+
+    const currentUser = Meteor.user();
+    const currentStatus = currentUser?.profile?.status;
+
+    if (currentStatus.isInvisible) {
+      Meteor.call('userAway', false);
+      Meteor.call('userInvisible', false);
+    } else if (currentStatus.isAway) {
+      Meteor.call('userAway', false);
+      Meteor.call('userInvisible', true);
+    } else {
+      Meteor.call('userAway', true);
+      Meteor.call('userInvisible', false);
+    }
   },
 });
 
@@ -182,9 +223,23 @@ Template.profileButton.helpers({
   },
 
   profilePicture() {
-    const profilePictureId = Meteor.user()?.profile?.pictureId;
+    const currentUser = Meteor.user();
+    const profilePictureId = currentUser?.profile?.pictureId;
     const profilePicture = ProfilePictures.findOne({ _id: profilePictureId });
     return profilePicture;
+  },
+
+  ppStatus() {
+    const currentUser = Meteor.user();
+    if (!currentUser?.profile?.status?.isOnline) {
+      return '';
+    } else if (currentUser?.profile?.status?.isInvisible) {
+      return `<div class="status-icon-background" style="width: 18px; left: 34px; top: -16px;"><div class="status-icon-invisible" style="width: 12px;"><div style="width: 6px;"></div></div>`;
+    } else if (currentUser?.profile?.status?.isAway) {
+      return `<div class="status-icon-background" style="width: 18px; left: 34px; top: -16px;"><div class="status-icon-away" style="width: 12px;"></div></div>`;
+    } else if (currentUser?.profile?.status?.isOnline) {
+      return `<div class="status-icon-background" style="width: 18px; left: 34px; top: -16px;"><div class="status-icon-online" style="width: 12px;"></div></div>`;
+    } else return '';
   },
 
   firstLetter() {
@@ -193,5 +248,12 @@ Template.profileButton.helpers({
       return user.username.charAt(0);
     }
     return '';
+  },
+
+  currentStatus() {
+    const currentUser = Meteor.user();
+    if (currentUser?.profile?.status?.isInvisible) return 'Statut &nbsp;: &nbsp;Invisible';
+    else if (currentUser?.profile?.status?.isAway) return 'Statut &nbsp;: &nbsp;Absent';
+    else return 'Statut &nbsp;: &nbsp;En ligne';
   },
 });

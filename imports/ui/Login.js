@@ -45,6 +45,7 @@ Template.login.events({
       } else {
         // Redirection vers la page chat après la connexion réussie
         FlowRouter.go('/chat');
+        Meteor.call('userOnline', true);
       }
     });
   },
