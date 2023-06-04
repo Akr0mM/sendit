@@ -118,12 +118,11 @@ Template.message.onRendered(function () {
   messContainer.addEventListener('mouseenter', () => {
     const parent = messContainer.parentNode.parentNode;
     const timestamp = parent.querySelector('.timestamp-hover');
-    const date = new Date(
-      messContainer.querySelector('.message-date').textContent,
+    const date = moment(
+      new Date(messContainer.querySelector('.message-date').textContent),
     );
-    const momentDate = moment(date);
-    const hour = momentDate.get('hour');
-    let minute = momentDate.get('minute');
+    const hour = date.get('hour');
+    let minute = date.get('minute');
     // @ts-ignore
     if (minute < 10) minute = `0${minute}`;
     timestamp.innerHTML = `${hour}:${minute}`;
