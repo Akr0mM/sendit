@@ -20,7 +20,10 @@
         <span class="timestamp">{{timestamp}}</span>
       </div>
       {{/if}}
-      <header class="{{#if isMyMessage}}my-message-author{{else}}message-author-a{{/if}}">{{authorUsername}}</header>
+      <header class="message-header">
+        <div class="{{#if isMyMessage}}my-message-author{{else}}message-author-a{{/if}}">{{authorUsername}}</div>
+        <div class="timestamp-hover"></div>
+      </header>
       <ul class="{{#if isMyMessage}}my-message-border{{else}}message-border-a{{/if}} message">
         {{#each messages}} {{> message}} {{/each}}
       </ul>
@@ -30,7 +33,8 @@
 
 
 <template name="message">
-  <li class="message-container">
+  <li class="message-container" name="messContainer">
     <div style="padding-right: 10px;">{{text}}</div>
+    <div style="display: none;" class="message-date">{{date}}</div>
   </li>
 </template>

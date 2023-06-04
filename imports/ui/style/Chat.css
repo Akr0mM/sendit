@@ -50,6 +50,27 @@
 .message-group {
   margin-bottom: 14px;
 }
+
+.message-header {
+  display: flex;
+  font-size: 15px;
+  text-transform: uppercase;
+  justify-content: space-between;
+}
+
+.timestamp-hover {
+  display: none;
+}
+
+.message-group-container:has(.message-container:hover)
+  > .message-header
+  > .timestamp-hover {
+  display: block;
+  color: #2b2929;
+  font-size: 14px;
+  font-weight: 600;
+}
+
 .message-container:hover {
   background-color: #242323;
 }
