@@ -95,7 +95,7 @@ Template.uploadForm.events({
         } else {
           Session.set(
             'previousProfilePicture',
-            Meteor.user().profile.pictureId,
+            Meteor.user()?.profile?.pictureId,
           );
           Meteor.users.update(Meteor.userId(), {
             $set: { 'profile.pictureId': fileObj._id },
@@ -115,12 +115,12 @@ Template.uploadForm.events({
 
     templateInstance.confirmation.set(false);
     if (Session.get('previousProfilePicture')) {
-      ProfilePictures.remove({ _id: Meteor.user().profile.pictureId });
+      ProfilePictures.remove({ _id: Meteor.user()?.profile?.pictureId });
       Meteor.users.update(Meteor.userId(), {
         $set: { 'profile.pictureId': Session.get('previousProfilePicture') },
       });
     } else {
-      ProfilePictures.remove({ _id: Meteor.user().profile.pictureId });
+      ProfilePictures.remove({ _id: Meteor.user()?.profile?.pictureId });
       Meteor.users.update(Meteor.userId(), {
         $set: { 'profile.pictureId': null },
       });
