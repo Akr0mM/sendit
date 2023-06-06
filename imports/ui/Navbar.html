@@ -73,7 +73,19 @@
         <div class="user-chat-message">{{lastChatText}}{{lastChatTimeAgo}}</div>
       </div>
     </div>
+    {{#if isHover}}
+    {{> editThreadNavbar}}
+    {{/if}}
   </li>
+</template>
+
+<template name="editThreadNavbar">
+  <div class="edit-navbar">
+    <span class="material-symbols-outlined edit-navbar-icon">more_horiz</span>
+  </div>
+  <div class="edit-dropdown">
+    EDIT
+  </div>
 </template>
 
 <template name="profileButton">
@@ -139,22 +151,22 @@
           {{#if favs.showExpand}}
           {{#if favs.isExpanded}}
           <ul class="add-favorite-users">
-          {{#each favs.restOfUsers}}
-          <li class="favorite-user">
-            {{#if profile.pictureId}}
-            <img class="user-pp" src="{{profilePicture.link}}" alt="{{profilePicture.name}}" />
-            {{else}}
-            <span class="user-pp">{{firstLetter}}</span>
-            {{/if}}
+            {{#each favs.restOfUsers}}
+            <li class="favorite-user">
+              {{#if profile.pictureId}}
+              <img class="user-pp" src="{{profilePicture.link}}" alt="{{profilePicture.name}}" />
+              {{else}}
+              <span class="user-pp">{{firstLetter}}</span>
+              {{/if}}
 
-            <div>{{username}}</div>
+              <div>{{username}}</div>
 
-            <div class="checkbox-container">
-              <input type="checkbox" id="{{_id}}" name="userCheckbox">
-              <label for="{{_id}}" class="checkmark"></label>
-            </div>
-          </li>
-          {{/each}}
+              <div class="checkbox-container">
+                <input type="checkbox" id="{{_id}}" name="userCheckbox">
+                <label for="{{_id}}" class="checkmark"></label>
+              </div>
+            </li>
+            {{/each}}
           </ul>
           <div class="expand-favorites">
             <span class="material-symbols-outlined">expand_less</span>
@@ -169,9 +181,9 @@
         {{/if}}
 
         {{#if recents.hasRecents}}
-          <div>
-            <div style="margin-bottom: 10px;">Recents</div>
-          </div>
+        <div>
+          <div style="margin-bottom: 10px;">Recents</div>
+        </div>
         {{/if}}
       </div>
 

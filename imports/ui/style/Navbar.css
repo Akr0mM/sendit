@@ -283,7 +283,66 @@ input:focus {
   list-style-type: none;
 }
 
+.edit-navbar {
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  margin-right: 20px;
+  background-color: #3e4042;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s ease 0s;
+  box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.2)
+}
+
+.edit-navbar-icon {
+  color: #aaaaaa;
+  transition: color 0.2s ease 0s;
+}
+
+.edit-dropdown {
+  position: absolute;
+  right: -10px;
+  display: none;
+}
+
+.edit-navbar:hover {
+  background-color: #525355;
+}
+
+.edit-navbar:hover .edit-navbar-icon {
+  color: #ffffff;
+}
+
+.user-chat:has(.edit-navbar:hover) {
+  background-color: #121212;
+}
+
+.user-chat:has(.edit-navbar:hover) .status-icon-background {
+  background-color: #121212;
+}
+
+.user-chat:has(.edit-navbar:hover) .status-icon-invisible > div {
+  background-color: #121212;
+}
+
+.selected-chat:has(.edit-navbar:hover) {
+  background-color: #232323;
+}
+
+.selected-chat:has(.edit-navbar:hover) .status-icon-background {
+  background-color: #232323;
+}
+
+.selected-chat:has(.edit-navbar:hover) .status-icon-invisible > div {
+  background-color: #232323;
+}
+
 .user-chat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   height: 75px !important;
   margin-bottom: 10px;
   border-radius: 6px;

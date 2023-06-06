@@ -257,6 +257,52 @@ Template.navbar.helpers({
   },
 });
 
+Template.chatWithUsers.onCreated(function () {
+  this.isHover = new ReactiveVar(false);
+  this.editDropdown = new ReactiveVar(false);
+  this.btn1 = new ReactiveVar(undefined);
+  this.btn2 = new ReactiveVar(undefined);
+
+  this.handleMouseOver = function setHoverTrue() {
+    this.isHover.set(true);
+    this.btn1.set($('.edit-navbar'));
+    this.btn2.set($('.edit-navbar-icon'));
+  };
+
+  this.handleMouseOut = function setHoverFalse() {
+    if (!this.editDropdown.get()) {
+      console.log('editDropdown false');
+      this.isHover.set(false);
+    }
+  };
+
+  $(document).on('click', event => {
+    const dropdown = $('.edit-dropdown');
+    const btn1 = this.btn1.get();
+    const btn2 = this.btn2.get();
+    if (this.editDropdown.get()) {
+      console.log('dropdown ', this.editDropdown.get());
+      if (
+        !dropdown.is(event.target) &&
+        !btn1.is(event.target) &&
+        !btn2.is(event.target) &&
+        dropdown.has(event.target).length === 0
+      ) {
+        dropdown.hide();
+        this.isHover.set(false);
+        this.editDropdown.set(false);
+      }
+    }
+  });
+});
+
+Template.chatWithUsers.helpers({
+  isHover() {
+    const template = Template.instance();
+    return template.isHover.get();
+  },
+});
+
 Template.chatWithUsers.helpers({
   isSelect(threadId) {
     if (threadId === Meteor.user().profile?.currentThreadId) return true;
@@ -267,11 +313,15 @@ Template.chatWithUsers.helpers({
 Template.navbar.events({
   'click .user-chat'(event) {
     let { target } = event;
-    while (!target?.classList?.contains('user-chat')) {
+    if (
+      target?.classList.contains('edit-navbar') ||
+      target?.classList.contains('edit-navbar-icon')
+    ) return;
+    while (!target?.classList.contains('user-chat')) {
       target = target.parentNode;
     }
-    selectedChat?.classList?.remove('selected-chat');
-    target.classList.add('selected-chat');
+    selectedChat?.classList.remove('selected-chat');
+    target?.classList.add('selected-chat');
     selectedChat = target;
 
     Meteor.call('setCurrentThreadId', this.selectThreadId);
@@ -282,9 +332,33 @@ Template.navbar.events({
   },
 });
 
+Template.chatWithUsers.events({
+  'mouseover .user-chat'(event, templateInstance) {
+    templateInstance.handleMouseOver();
+  },
+
+  'mouseout .user-chat'(event, templateInstance) {
+    templateInstance.handleMouseOut();
+  },
+
+  'click .edit-navbar-icon'(event, templateInstance) {
+    const dropdown = Template.instance().editDropdown;
+    dropdown.set(!dropdown.get());
+    console.log(templateInstance.$('.edit-dropdown'));
+    templateInstance.$('.edit-dropdown').toggle();
+  },
+});
+
+Template.chatWithUsers.helpers({
+  isSelect(threadId) {
+    if (threadId === Meteor.user().profile?.currentThreadId) return true;
+    else return false;
+  },
+});
+
 Template.profileButton.events({
   'click .btn-profile'(event, templateInstance) {
-    templateInstance.$('.dropdown-menu').toggle(); // Afficher ou masquer le menu déroulant
+    templateInstance.$('.dropdown-menu').toggle();
   },
 
   'click .account-settings'(event, templateInstance) {
