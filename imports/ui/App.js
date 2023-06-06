@@ -69,30 +69,31 @@ Template.chat.helpers({
 
 Template.chatOpen.helpers({
   groupNames() {
+    const { profile } = Meteor.user();
     const thread = Threads.findOne({
-      _id: Meteor.user().profile.currentThreadId,
+      _id: profile.currentThreadId,
     });
-    if (!thread) return;
+    if (!thread) return [];
     const threadUsersId = thread.usersId;
-    // const index = threadUsersId.indexOf(Meteor.userId());
-    // // eslint-disable-next-line no-unused-vars
-    // const splice = threadUsersId.splice(index, 1);
     const users = threadUsersId.map(userId => {
-      const User = Meteor.users.findOne({ _id: userId });
-      const user = {};
-      Object.assign(user, User);
-      user.profilePictureId = user?.profile?.pictureId;
-      if (user.profilePictureId) {
+      const user = Meteor.users.findOne({ _id: userId });
+      if (!user) return undefined;
+      if (user.profile?.pictureId) {
         user.profilePicture = ProfilePictures.findOne({
-          _id: user.profilePictureId,
+          _id: user.profile.pictureId,
         });
-      } else if (user && user.username) {
-        user.firstLetter = user.username.charAt(0);
+      } else if (user?.username) {
+        user.firstLetter = user.username?.charAt(0);
       }
+      if (profile.favoriteUsers.includes(user._id)) {
+        user.isFavorite = 'TRUE';
+      } else {
+        user.isFavorite = 'FALSE';
+      }
+
       return user;
     });
 
-    // eslint-disable-next-line consistent-return
     return users;
   },
 });
@@ -114,6 +115,15 @@ Template.groupName.events({
   'click .group-user-container'(event, templateInstance) {
     event.preventDefault();
     templateInstance.$('.profile-dropdown-menu').toggle();
-    console.log(this);
+  },
+
+  'click .add-favorite'(event) {
+    event.preventDefault();
+
+    if (Meteor.user()?.profile?.favoriteUsers.includes(this._id)) {
+      Meteor.call('removeFavoriteUsers', this._id);
+    } else {
+      Meteor.call('addFavoriteUsers', this._id);
+    }
   },
 });
