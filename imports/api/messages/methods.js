@@ -35,16 +35,11 @@ Meteor.methods({
     Threads.update(threadId, { $set: { lastChatText: text } });
   },
 
-  setCurrentThreadId(targetUserId) {
-    check(targetUserId, String);
+  setCurrentThreadId(threadId) {
+    check(threadId, String);
 
     const currentUser = Meteor.userId();
-    const thread = Threads.findOne({
-      $or: [
-        { usersId: { $all: [currentUser, targetUserId] } },
-        { usersId: { $all: [targetUserId, currentUser] } },
-      ],
-    });
+    const thread = Threads.findOne({ _id: threadId });
 
     if (!thread) {
       console.log('error: thread not found methods.js');
@@ -97,7 +92,7 @@ Meteor.methods({
         const currentUserUsername = Meteor.user()?.username;
         Threads.insert({
           usersId: [currentUser, targetUserId],
-          usersUsernames: [currentUserUsername, targetUsername],
+          usersUsername: [currentUserUsername, targetUsername],
           lastChatText: null,
           lastChatAt: new Date(0),
           lastChatTimeAgo: new Date(0),
@@ -151,6 +146,7 @@ Meteor.methods({
         },
         currentThreadId: null,
         pictureId: null,
+        favoritesUsers: [],
       },
     };
 
@@ -190,5 +186,45 @@ Meteor.methods({
         'Échec de la mise à jour du nom d\'utilisateur.',
       );
     }
+  },
+
+  addFavoriteUsers(id) {
+    check(id, String);
+
+    Meteor.users.update(Meteor.userId(), {
+      $push: { 'profile.favoriteUsers': id },
+    });
+  },
+
+  removeFavoriteUsers(id) {
+    check(id, String);
+
+    Meteor.users.update(Meteor.userId(), {
+      $pull: { 'profile.favoriteUsers': id },
+    });
+  },
+
+  createGroup(users, name) {
+    check(users, Array);
+    check(name, String);
+
+    // @ts-ignore
+    const usersId = users.map(user => user._id);
+    // @ts-ignore
+    const usersUsername = users.map(user => user.username);
+    // @ts-ignore
+    if (!usersId.includes(Meteor.userId())) return;
+
+    const thread = Threads.insert({
+      name,
+      usersId,
+      usersUsername,
+      lastChatText: null,
+      lastChatAt: new Date(0),
+      lastChatTimeAgo: new Date(0),
+      profilePictureId: null,
+    });
+
+    console.log('create group', thread);
   },
 });

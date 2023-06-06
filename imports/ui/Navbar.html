@@ -1,17 +1,19 @@
 <template name="navbar">
   <div class="navbar" style="user-select: none">
-    <header class="navbar-header">{{> profileButton}}</header>
+    <header class="navbar-header">{{> profileButton}}<div>Sendit</div>
+    </header>
 
     <div class="last-chats-container">
       <header class="last-chats-header">
         <div class="last-chats-header-top">
           Discussions
-          <span class="material-symbols-outlined icons" style="
+          <span class="material-symbols-outlined icons add-group-btn" style="
               font-size: 28px;
               margin-left: 108px;
               color: #cccccc;
               padding: 3px;
             ">add</span>
+          {{> addGroupDropdown}}
           <span class="material-symbols-outlined icons" style="
               font-size: 30px;
               margin-left: 8px;
@@ -20,9 +22,9 @@
             ">more_horiz</span>
         </div>
         <div class="last-chats-header-filter">
-          <span class="last-chats-header-filters clickable">En ligne</span>
-          <span class="last-chats-header-filters clickable" style="margin-left: 15px">Groupes</span>
-          <span class="last-chats-header-filters clickable" style="margin-left: 15px">Favoris</span>
+          <span class="last-chats-header-filters">En ligne</span>
+          <span class="last-chats-header-filters" style="margin-left: 15px">Groupes</span>
+          <span class="last-chats-header-filters" style="margin-left: 15px">Favoris</span>
         </div>
         <div class="last-chats-header-searchbar">
           {{!-- search icon --}}
@@ -58,12 +60,13 @@
 <template name="chatWithUsers">
   <li class="user-chat {{#if isSelect selectThreadId}}selected-chat{{/if}}">
     <div class="user-chat-container">
-      <div style="width: 56px; height: 56px">
+      <div class="pp-container" style="width: 56px; height: 56px">
         {{#if profilePictureId}}
         <img class="user-profile-picture" src="{{profilePicture.link}}" alt="{{profilePicture.name}}" />
         {{else}}
         <span class="user-profile-picture">{{firstLetter}}</span>
         {{/if}}
+        {{{statusIcon}}}
       </div>
       <div class="user-chat-info">
         <div class="user-chat-username">{{username}}</div>
@@ -75,15 +78,19 @@
 
 <template name="profileButton">
   <div class="profile-button">
-    <button class="btn-profile">
+    <div class="btn-profile" style="cursor: pointer">
       {{#if currentProfilePicture}}
-      <img class="current-pp" src="{{profilePicture.link}}" alt="{{profilePicture.name}}" />
+      <div>
+        <img class="profile-picture" src="{{profilePicture.link}}" alt="{{profilePicture.name}}" />
+        {{{ppStatus}}}
+      </div>
       {{else}}
       <span>{{firstLetter}}</span>
       {{/if}}
-    </button>
+    </div>
     <div class="dropdown-menu">
       <ul class="dropdown-list">
+        <li class="status-settings">{{{currentStatus}}}</li>
         <li class="account-settings">Paramètre du compte</li>
         <li>
           <div class="logout-button" style="color: #f23c57">Déconnexion</div>
@@ -91,5 +98,88 @@
         <li>version 1.0.0</li>
       </ul>
     </div>
+  </div>
+</template>
+
+<template name="addGroupDropdown">
+  <div class="add-group-dropdown">
+    {{#if currentUser}}
+    <form class="add-group">
+      <div class="group-users">
+        <div style="display: flex; align-items: center; margin-bottom: 4px; margin-top: 2px;">
+          <span class="material-symbols-outlined" style="font-size: 24px;">person_search</span>
+          <span style="height: 20px; margin-left: 7px; color: #ffffff77;">À :&nbsp;</span>
+          <input type="text" class="group-users-input">
+        </div>
+      </div>
+      <input type="text" placeholder="Nom du groupe" class="group-name-input">
+
+      <div style="width: 300px !important">
+        {{#if favs.hasFavorites}}
+        <div style="margin-bottom: 10px;">
+          <div style="margin-bottom: 10px;">Favoris</div>
+          <ul class="add-favorite-users">
+            {{#each favs.firstUsers}}
+            <li class="favorite-user">
+              {{#if profile.pictureId}}
+              <img class="user-pp" src="{{profilePicture.link}}" alt="{{profilePicture.name}}" />
+              {{else}}
+              <span class="user-pp">{{firstLetter}}</span>
+              {{/if}}
+
+              <div>{{username}}</div>
+
+              <div class="checkbox-container">
+                <input type="checkbox" id="{{_id}}" name="userCheckbox">
+                <label for="{{_id}}" class="checkmark"></label>
+              </div>
+            </li>
+            {{/each}}
+          </ul>
+          {{#if favs.showExpand}}
+          {{#if favs.isExpanded}}
+          <ul class="add-favorite-users">
+          {{#each favs.restOfUsers}}
+          <li class="favorite-user">
+            {{#if profile.pictureId}}
+            <img class="user-pp" src="{{profilePicture.link}}" alt="{{profilePicture.name}}" />
+            {{else}}
+            <span class="user-pp">{{firstLetter}}</span>
+            {{/if}}
+
+            <div>{{username}}</div>
+
+            <div class="checkbox-container">
+              <input type="checkbox" id="{{_id}}" name="userCheckbox">
+              <label for="{{_id}}" class="checkmark"></label>
+            </div>
+          </li>
+          {{/each}}
+          </ul>
+          <div class="expand-favorites">
+            <span class="material-symbols-outlined">expand_less</span>
+          </div>
+          {{else}}
+          <div class="expand-favorites">
+            <span class="material-symbols-outlined">expand_more</span>
+          </div>
+          {{/if}}
+          {{/if}}
+        </div>
+        {{/if}}
+
+        {{#if recents.hasRecents}}
+          <div>
+            <div style="margin-bottom: 10px;">Recents</div>
+          </div>
+        {{/if}}
+      </div>
+
+      <div class="add-group-confirmation">
+        <div class="add-group-cancel confirmation-button add-group-btn">Annuler</div>
+        <div class="add-group-create confirmation-button">Créer</div>
+      </div>
+    </form>
+    {{/if}}
   </div>
 </template>

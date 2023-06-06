@@ -30,6 +30,22 @@ let selectedChat;
 
 Template.navbar.onCreated(function () {
   this.subscribe('users');
+
+  const self = this;
+
+  $(document).on('click', event => {
+    const dropdown = self.$('.add-group-dropdown');
+    const btn = self.$('.add-group-btn');
+    if (dropdown.is(':visible')) {
+      if (
+        !dropdown.is(event.target) &&
+        !btn.is(event.target) &&
+        dropdown.has(event.target).length === 0
+      ) {
+        dropdown.hide();
+      }
+    }
+  });
 });
 
 Template.navbar.onRendered(() => {
@@ -48,26 +64,48 @@ Template.navbar.helpers({
 
     // Trouver tous les threads existants et stocker la date du dernier message et le dernier message pour chaque thread
     Threads.find({ usersId: userId }).forEach(thread => {
-      const otherUserId = thread?.usersId?.find(id => id !== userId);
-      const lastChatAt = thread?.lastChatAt || undefined;
+      let otherUserId;
+      let lastChatAt;
+      if (thread.usersId.length === 2) {
+        otherUserId = thread.usersId?.find(id => id !== userId);
+        lastChatAt = thread?.lastChatAt;
+      } else {
+        otherUserId = thread.usersId.map(id => {
+          if (id !== userId) return id;
+          else return null;
+        });
+        otherUserId.unshift(thread._id);
+        lastChatAt = thread?.lastChatAt;
+      }
       threads.push({ userId: otherUserId, lastChatAt });
     });
 
     // Trier les threads par date du dernier message et récupérer les utilisateurs correspondants
     const sortedThreads = threads.sort((a, b) => b.lastChatAt - a.lastChatAt);
-    const sortedUsers = sortedThreads.map(thread => Meteor.users.findOne({ _id: thread?.userId }),
-    );
+    const sortedUsers = sortedThreads.map(thread => {
+      const users = Array.isArray(thread.userId) ?
+        thread.userId.map((id, index) => (index === 0 ? id : Meteor.users.findOne({ _id: id })),
+        ) :
+        Meteor.users.findOne({ _id: thread.userId });
+      return users;
+    });
 
     // Trouver le dernier message du thread et le stocker dans chaque utilisateur
     let usersLastChat = sortedUsers.map(user => {
       if (!user) return;
       let threadId;
-      const thread = Threads.findOne({
-        $or: [
-          { usersId: { $all: [Meteor.userId(), user?._id] } },
-          { usersId: { $all: [user?._id, Meteor.userId()] } },
-        ],
-      });
+      let thread;
+      if (Array.isArray(user)) {
+        thread = Threads.findOne({ _id: user[0] });
+        user.splice(0, 1);
+      } else {
+        thread = Threads.findOne({
+          $or: [
+            { usersId: { $all: [Meteor.userId(), user._id] } },
+            { usersId: { $all: [user._id, Meteor.userId()] } },
+          ],
+        });
+      }
 
       if (thread) {
         const lastChatAt = moment(thread?.lastChatAt);
@@ -83,6 +121,10 @@ Template.navbar.helpers({
             lastChatTimeAgo = `${moment()
               .diff(lastChatAt, 'hours')
               .toString()}h`;
+          } else if (moment().diff(lastChatAt, 'days') !== 0) {
+            lastChatTimeAgo = `${moment()
+              .diff(lastChatAt, 'days')
+              .toString()}j`;
           } else if (moment().diff(lastChatAt, 'minutes') === 0) {
             lastChatTimeAgo = lastChatAt.locale('fr').fromNow(true);
           } else {
@@ -107,51 +149,107 @@ Template.navbar.helpers({
           'thread is undefined : l. 106',
         );
       }
-      const newUser = {};
-      Object.assign(newUser, user);
-      newUser.profilePictureId = Meteor.users.findOne({
-        _id: newUser._id,
-      }).profile?.pictureId;
-      if (newUser.profilePictureId) {
-        newUser.profilePicture = ProfilePictures.findOne({
-          _id: newUser.profilePictureId,
-        });
-      }
-      if (newUser && newUser.username) {
-        newUser.firstLetter = newUser.username.charAt(0);
-      } else {
-        newUser.firstLetter = '';
-      }
-      newUser.selectThreadId = threadId;
-      if (
-        thread?.lastChatTimeAgo === moment(new Date(0)).locale('fr').format('L')
-      ) {
-        // @ts-ignore
-        newUser.lastChatTimeAgo = '';
-        // @ts-ignore
-      } else newUser.lastChatTimeAgo = `  •  ${thread?.lastChatTimeAgo}`;
 
-      if (thread?.lastChatText) {
-        newUser.lastChatText = thread?.lastChatText;
-      } else {
-        newUser.lastChatText = 'Envoyer votre premier message !';
-        newUser.lastChatTimeAgo = '';
-      }
+      const nbUser = {};
+      if (thread.name) {
+        const users = user.filter(element => element !== undefined);
+        nbUser.selectThreadId = threadId;
+        nbUser.username = thread.name;
+        nbUser.firstLetter = nbUser.username.charAt(0);
+        nbUser.profilePictureId = thread.profilePictureId;
+        if (nbUser.profilePictureId) {
+          nbUser.profilePicture = ProfilePictures.findOne({
+            _id: nbUser.profilePictureId,
+          });
+        }
+        if (
+          thread?.lastChatTimeAgo ===
+          moment(new Date(0)).locale('fr').format('L')
+        ) {
+          // @ts-ignore
+          nbUser.lastChatTimeAgo = '';
+          // @ts-ignore
+        } else nbUser.lastChatTimeAgo = `  •  ${thread?.lastChatTimeAgo}`;
 
-      // status of the user
-      if (
-        !newUser?.profile?.status?.isOnline ||
-        newUser?.profile?.status?.isInvisible
-      ) {
-        newUser.statusIcon = `<div class="status-icon-background" style="width: 18px; left: 39px; top: -17px;"><div class="status-icon-invisible" style="width: 12px;"><div style="width: 6px;"></div></div>`;
-      } else if (newUser?.profile?.status?.isAway) {
-        newUser.statusIcon = `<div class="status-icon-background" style="width: 18px; left: 39px; top: -17px;"><div class="status-icon-away" style="width: 12px;"</div></div>`;
-      } else if (newUser?.profile?.status?.isOnline) {
-        newUser.statusIcon = `<div class="status-icon-background" style="width: 18px; left: 39px; top: -17px;"><div class="status-icon-online" style="width: 12px;"></div></div>`;
-      } else newUser.statusIcon = '';
+        if (thread?.lastChatText) {
+          nbUser.lastChatText = thread?.lastChatText;
+        } else {
+          nbUser.lastChatText = 'Envoyer votre premier message !';
+          nbUser.lastChatTimeAgo = '';
+        }
+
+        let isOnline = false;
+        let isAway = false;
+
+        for (let i = 0; i < users.length; i++) {
+          const { status } = users[i].profile;
+
+          if (status.isOnline && !status.isInvisible && !status.isAway) {
+            isOnline = true;
+            break;
+          } else if (status.isAway && !status.isInvisible && status.isOnline) {
+            isAway = true;
+          }
+        }
+
+        let statusIcon = '';
+
+        if (isOnline) {
+          statusIcon = `<div class="status-icon-background" style="width: 18px; left: 39px; top: -17px;"><div class="status-icon-online" style="width: 12px;"></div></div>`;
+        } else if (isAway) {
+          statusIcon = `<div class="status-icon-background" style="width: 18px; left: 39px; top: -17px;"><div class="status-icon-away" style="width: 12px;"></div></div>`;
+        } else {
+          statusIcon = `<div class="status-icon-background" style="width: 18px; left: 39px; top: -17px;"><div class="status-icon-invisible" style="width: 12px;"><div style="width: 6px;"></div></div></div>`;
+        }
+
+        nbUser.statusIcon = statusIcon;
+      } else {
+        Object.assign(nbUser, user);
+        nbUser.profilePictureId = Meteor.users.findOne({
+          _id: nbUser._id,
+        }).profile?.pictureId;
+        if (nbUser.profilePictureId) {
+          nbUser.profilePicture = ProfilePictures.findOne({
+            _id: nbUser.profilePictureId,
+          });
+        }
+        if (nbUser && nbUser.username) {
+          nbUser.firstLetter = nbUser.username.charAt(0);
+        } else {
+          nbUser.firstLetter = '';
+        }
+        nbUser.selectThreadId = threadId;
+        if (
+          thread?.lastChatTimeAgo ===
+          moment(new Date(0)).locale('fr').format('L')
+        ) {
+          // @ts-ignore
+          nbUser.lastChatTimeAgo = '';
+          // @ts-ignore
+        } else nbUser.lastChatTimeAgo = `  •  ${thread?.lastChatTimeAgo}`;
+
+        if (thread?.lastChatText) {
+          nbUser.lastChatText = thread?.lastChatText;
+        } else {
+          nbUser.lastChatText = 'Envoyer votre premier message !';
+          nbUser.lastChatTimeAgo = '';
+        }
+
+        // status of the user
+        if (
+          !nbUser?.profile?.status?.isOnline ||
+          nbUser?.profile?.status?.isInvisible
+        ) {
+          nbUser.statusIcon = `<div class="status-icon-background" style="width: 18px; left: 39px; top: -17px;"><div class="status-icon-invisible" style="width: 12px;"><div style="width: 6px;"></div></div>`;
+        } else if (nbUser?.profile?.status?.isAway) {
+          nbUser.statusIcon = `<div class="status-icon-background" style="width: 18px; left: 39px; top: -17px;"><div class="status-icon-away" style="width: 12px;"</div></div>`;
+        } else if (nbUser?.profile?.status?.isOnline) {
+          nbUser.statusIcon = `<div class="status-icon-background" style="width: 18px; left: 39px; top: -17px;"><div class="status-icon-online" style="width: 12px;"></div></div>`;
+        } else nbUser.statusIcon = '';
+      }
 
       // eslint-disable-next-line consistent-return
-      return newUser;
+      return nbUser;
     });
 
     usersLastChat = usersLastChat.filter(element => element !== undefined);
@@ -176,7 +274,11 @@ Template.navbar.events({
     target.classList.add('selected-chat');
     selectedChat = target;
 
-    Meteor.call('setCurrentThreadId', this._id);
+    Meteor.call('setCurrentThreadId', this.selectThreadId);
+  },
+
+  'click .add-group-btn'(event, templateInstance) {
+    templateInstance.$('.add-group-dropdown').toggle();
   },
 });
 
@@ -255,5 +357,64 @@ Template.profileButton.helpers({
     if (currentUser?.profile?.status?.isInvisible) return 'Statut &nbsp;: &nbsp;Invisible';
     else if (currentUser?.profile?.status?.isAway) return 'Statut &nbsp;: &nbsp;Absent';
     else return 'Statut &nbsp;: &nbsp;En ligne';
+  },
+});
+
+Template.addGroupDropdown.helpers({
+  favs() {
+    const hasFavorites = Meteor.user().profile.favoriteUsers.length;
+
+    const favs = Meteor.user().profile.favoriteUsers;
+    const users = favs.map(userId => {
+      const user = Meteor.users.findOne({ _id: userId });
+      if (!user) return {};
+      user.profilePicture = ProfilePictures.findOne({
+        _id: user.profile.pictureId,
+      });
+      user.firstLetter = user.username.charAt(0);
+      return user;
+    });
+
+    const showExpand = users.length > 4;
+    const firstUsers = users.slice(0, 4);
+    const restOfUsers = users.splice(4);
+
+    return {
+      hasFavorites,
+      firstUsers,
+      showExpand,
+      restOfUsers,
+      isExpanded: Session.get('expandFavorites'),
+    };
+  },
+
+  recents() {
+    return {
+      hasRecents: true,
+    };
+  },
+});
+
+Template.addGroupDropdown.events({
+  'click .favorite-user'(event, templateInstance) {
+    const checkbox = templateInstance
+      .$(event.currentTarget)
+      .find('input[type="checkbox"]');
+    checkbox.prop('checked', !checkbox.prop('checked'));
+  },
+
+  'click .expand-favorites'() {
+    Session.set('expandFavorites', !Session.get('expandFavorites'));
+  },
+
+  'click .add-group-create'() {
+    const checkboxs = document.querySelectorAll('input[type=checkbox]');
+    const checked = [].filter.call(checkboxs, checkbox => checkbox.checked);
+    const users = checked.map(input => Meteor.users.findOne({ _id: input.id }));
+    users.push(Meteor.user());
+    // @ts-ignore
+    const groupName = document.querySelector('.group-name-input').value;
+    if (groupName === '') return;
+    Meteor.call('createGroup', users, groupName);
   },
 });
